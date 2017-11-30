@@ -64,29 +64,57 @@ key_map = {
     '9': { 'U': '6', 'R': '9', 'D': '9', 'L': '8' },
 }
 
-def find_key(start, instructions):
+"""
+    1
+  2 3 4
+5 6 7 8 9
+  A B C
+    D
+"""
+
+key_map_diamond = {
+    '1': { 'U': '1', 'R': '1', 'D': '3', 'L': '1' },
+    '2': { 'U': '2', 'R': '3', 'D': '6', 'L': '2' },
+    '3': { 'U': '1', 'R': '4', 'D': '7', 'L': '2' },
+    '4': { 'U': '4', 'R': '4', 'D': '8', 'L': '3' },
+    '5': { 'U': '5', 'R': '6', 'D': '5', 'L': '5' },
+    '6': { 'U': '2', 'R': '7', 'D': 'A', 'L': '5' },
+    '7': { 'U': '3', 'R': '8', 'D': 'B', 'L': '6' },
+    '8': { 'U': '4', 'R': '9', 'D': 'C', 'L': '7' },
+    '9': { 'U': '9', 'R': '9', 'D': '9', 'L': '8' },
+    'A': { 'U': '6', 'R': 'B', 'D': 'A', 'L': 'A' },
+    'B': { 'U': '7', 'R': 'C', 'D': 'D', 'L': 'A' },
+    'C': { 'U': '8', 'R': 'C', 'D': 'C', 'L': 'B' },
+    'D': { 'U': 'B', 'R': 'D', 'D': 'D', 'L': 'D' },
+}
+
+def find_key(key_map, start, instructions):
     current_position = start
     for instruction in instructions:
         current_position = key_map[current_position][instruction]
     return current_position
 
-assert find_key('1', 'U') == '1'
-assert find_key('1', 'R') == '2'
-assert find_key('5', 'ULL') == '1'
-assert find_key('1', 'RRDDD') == '9'
-assert find_key('9', 'LURDL') == '8'
-assert find_key('8', 'UUUUD') == '5'
+assert find_key(key_map, '1', 'U') == '1'
+assert find_key(key_map, '1', 'R') == '2'
+assert find_key(key_map, '5', 'ULL') == '1'
+assert find_key(key_map, '1', 'RRDDD') == '9'
+assert find_key(key_map, '9', 'LURDL') == '8'
+assert find_key(key_map, '8', 'UUUUD') == '5'
 
-def find_keys(current_key, key_instructions):
+def find_keys(key_map, current_key, key_instructions):
     keys = ''
     for key_instruction in key_instructions:
-        current_key = find_key(current_key, key_instruction)
+        current_key = find_key(key_map, current_key, key_instruction)
         keys += current_key
     return keys
 
-assert find_keys('5', ['ULL']) == '1'
-assert find_keys('5', ['ULL', 'RRDDD']) == '19'
+assert find_keys(key_map, '5', ['ULL']) == '1'
+assert find_keys(key_map, '5', ['ULL', 'RRDDD']) == '19'
+assert find_keys(key_map_diamond, '5', ['ULL', 'RRDDD', 'LURDL', 'UUUUD']) == '5DB3'
 
 key_instructions = input.split('\n')
-keys = find_keys('5', key_instructions)
+keys = find_keys(key_map, '5', key_instructions)
+keys_diamond = find_keys(key_map_diamond, '5', key_instructions)
+
 print keys
+print keys_diamond
