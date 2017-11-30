@@ -1950,20 +1950,41 @@ assert raw_row_to_array('   23 45 ') == [23, 45]
 assert raw_row_to_array('3 45      ') == [3, 45]
 assert raw_row_to_array('3 45     7 ') == [3, 45, 7]
 
-def count_valid_triangles(raw):
-    count = 0
+def raw_to_triangles(raw, is_vertical):
+    result = []
     triangle_lengths_raw_list = raw.split('\n')
 
-    for triangle_lengths_raw in triangle_lengths_raw_list:
+    for index, triangle_lengths_raw in enumerate(triangle_lengths_raw_list):
         if len(triangle_lengths_raw) <= 0:
             continue
 
         triangle_lengths = raw_row_to_array(triangle_lengths_raw)
-        triangle_lengths.sort()
 
-        if is_triangle(triangle_lengths):
+        if is_vertical:
+            if index % 3 == 0:
+                result.append([triangle_lengths[0]])
+                result.append([triangle_lengths[1]])
+                result.append([triangle_lengths[2]])
+            else:
+                start_index = index - (index % 3)
+                result[start_index].append(triangle_lengths[0])
+                result[start_index + 1].append(triangle_lengths[1])
+                result[start_index + 2].append(triangle_lengths[2])
+        else:
+            result.append(triangle_lengths)
+
+    return result
+
+def count_valid_triangles(raw, is_vertical=False):
+    count = 0
+    triangles = raw_to_triangles(raw, is_vertical)
+
+    for triangle in triangles:
+        triangle.sort()
+
+        if is_triangle(triangle):
             count += 1
-    
+
     return count
 
 assert count_valid_triangles(' 5 25 25') == 1
@@ -1971,4 +1992,5 @@ assert count_valid_triangles(' 5 25 25\n5 10 25') == 1
 assert count_valid_triangles(' 5 25 25\n5 30 26\n\n') == 2
 
 print count_valid_triangles(input)
+print count_valid_triangles(input, True)
 
